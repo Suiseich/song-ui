@@ -1,9 +1,14 @@
-// src/api/axios.js (or wherever you set up axios)
 import axios from 'axios';
 
-const api = axios.create({
-  // Use your actual backend URL here
-  baseURL: 'https://song-api-fy89.onrender.com/tayag' 
-});
+const API_URL = "https://song-api-fy89.onrender.com/tayag/songs";
 
-export const getSongs = () => api.get('/songs');
+export const getSongs = async () => {
+    try {
+        const response = await axios.get(API_URL);
+        // Ensure we return an empty array if the response is empty or not as expected
+        return Array.isArray(response.data) ? response.data : [];
+    } catch (error) {
+        console.error("API Error:", error);
+        return []; // Return empty array so the frontend doesn't crash
+    }
+};
