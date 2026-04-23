@@ -26,12 +26,15 @@ function App() {
     const fetchSongs = async () => {
       try {
         const data = await getSongs();
-        setSongs(data);
-        if (data.length > 0) {
-          setSelectedSong(data[0]);
+        // Fix 1: Ensure data is an array before setting state
+        const songList = Array.isArray(data) ? data : [];
+        setSongs(songList);
+        if (songList.length > 0) {
+          setSelectedSong(songList[0]);
         }
       } catch (err) {
         console.error("Error fetching songs:", err);
+        setSongs([]); // Fix 2: Fallback to empty array on error
       }
     };
 
@@ -48,7 +51,8 @@ function App() {
   const filteredSongs = useMemo(() => {
     const query = searchTerm.toLowerCase().trim();
 
-    return songs.filter((song) => {
+    // Fix 3: Safety check (songs || []) to prevent .filter() crash
+    return (songs || []).filter((song) => {
       const title = (song.title || song.name || "").toLowerCase();
       const artist = (song.artist || song.author || "").toLowerCase();
 
